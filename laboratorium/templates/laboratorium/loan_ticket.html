@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Bukti Peminjaman Alat Laboratorium</title>
+    <style>
+        @page {
+            margin: 2cm;
+        }
+        body { 
+            font-family: 'Helvetica', 'Arial', sans-serif; 
+            font-size: 11pt;
+            color: #333;
+        }
+        
+        /* === STYLE BARU UNTUK HEADER === */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .header-table td {
+            border: none;
+            vertical-align: middle; /* Kunci agar logo dan teks sejajar di tengah secara vertikal */
+        }
+        .logo-cell {
+            width: 16%; /* Lebar kolom logo */
+            padding-right: 15px;
+        }
+        .logo-cell img {
+            max-width: 80px; /* Atur ukuran maksimal logo */
+            height: auto;
+        }
+        .text-cell {
+            width: 80%; /* Lebar kolom teks */
+            text-align: center;
+        }
+        .text-cell h1 { 
+            font-size: 18pt; 
+            margin: 0;
+            padding: 0;
+        }
+        .text-cell h2 {
+            font-size: 14pt;
+            font-weight: normal;
+            margin-top: 5px;
+        }
+        /* === BATAS STYLE BARU === */
+
+        h3 { 
+            font-size: 14pt;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+        .data-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        .data-table th, .data-table td { 
+            border: 1px solid #999; 
+            padding: 10px; 
+            text-align: left; 
+        }
+        .data-table th { 
+            background-color: #e9ecef;
+            width: 30%;
+            font-weight: bold;
+        }
+        .signature-table {
+            width: 100%;
+            margin-top: 40px;
+            border: none;
+        }
+        .signature-table td {
+            width: 50%;
+            text-align: center;
+            border: none;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    
+    <table class="header-table">
+        <tr>
+            <td class="logo-cell">
+                <img src="https://tri.pens.ac.id/wp-content/themes/Divi/images/logo.png" alt="Logo">
+            </td>
+            <td class="text-cell">
+                <h1>Laboratorium Teknologi Rekayasa Internet</h1>
+                <h2>Bukti Peminjaman Alat pada {{ peminjaman.laboratorium.nama }}</h2>
+            </td>
+        </tr>
+    </table>
+    
+    <p><strong>Tanggal Cetak:</strong> {% now "d F Y" %}</p>
+    
+    <h3>Data Peminjam</h3>
+    <table class="data-table">
+        <tr>
+            <th>Nama Lengkap</th>
+            <td>{{ peminjaman.nama_lengkap }}</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>{{ peminjaman.status_peminjam }}</td>
+        </tr>
+        <tr>
+            <th>NRP / NIP</th>
+            <td>{{ peminjaman.nrp_nip }}</td>
+        </tr>
+    </table>
+    
+    <h3>Data Alat yang Dipinjam</h3>
+    <table class="data-table">
+        {% if peminjaman.is_alat_baru %}
+            <tr>
+                <th>Nama Alat</th>
+                <td>{{ peminjaman.nama_alat_baru }}</td>
+            </tr>
+            <tr>
+                <th>Tipe/Merk</th>
+                <td>{{ peminjaman.tipe_alat_baru }}</td>
+            </tr>
+            <tr>
+                <th>Serial Number</th>
+                <td>{{ peminjaman.sn_alat_baru|default:"-" }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <th>Kategori Alat</th>
+                <td>{{ peminjaman.unit_alat.kategori.nama }}</td>
+            </tr>
+             <tr>
+                <th>Tipe/Merk</th>
+                <td>{{ peminjaman.unit_alat.tipe_atau_merk }}</td>
+            </tr>
+            <tr>
+                <th>Serial Number</th>
+                <td>{{ peminjaman.unit_alat.serial_number }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Catatan Kondisi Awal</th>
+            <td>{{ peminjaman.catatan_kondisi|default:"-" }}</td>
+        </tr>
+    </table>
+
+    <div style="width: 100%; margin-top: 25px; page-break-inside: avoid; text-align: center;">
+        
+        <p style="margin-bottom: 20px;"><strong>Mengetahui :</strong></p>
+        
+        <table class="signature-table">
+            <tr>
+                <td>
+                    <p><strong>Peminjam</strong></p>
+                    <p style="padding-top: 70px;">({{ peminjaman.nama_lengkap }})</p>
+                </td>
+                
+                <td>
+                    <p><strong>PIC/PLP Laboratorium</strong></p>
+                    <p style="padding-top: 70px;">( .......................................... )</p>
+                </td>
+            </tr>
+        </table>
+        
+    </div>
+
+</body>
+</html>

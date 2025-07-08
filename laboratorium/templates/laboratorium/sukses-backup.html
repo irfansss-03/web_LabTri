@@ -1,0 +1,8 @@
+{% extends 'laboratorium/base.html' %}
+{% block content %}
+<div class="text-center my-5">
+    <h1 class="text-success">Berhasil!</h1>
+    <p>{{ pesan }}</p>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">Kembali ke Dashboard</a>
+</div>
+{% endblock %}

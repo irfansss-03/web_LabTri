@@ -1,0 +1,422 @@
+{% extends 'laboratorium/base.html' %}
+{% block content %}
+<style>
+    /* Main Title Section */
+    .main-title {
+        background: var(--glass-bg);
+        border: 2px solid var(--border-glow);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 60px;
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.3),
+            0 0 40px rgba(0, 212, 255, 0.2);
+    }
+
+    .main-title::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+        animation: titleSweep 3s linear infinite;
+    }
+
+    @keyframes titleSweep {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .main-title h1 {
+        font-family: 'JetBrains Mono', monospace;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .main-title p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* Category Section */
+    .kategori-section {
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+    .kategori-header {
+        background: var(--engineering-gradient);
+        border: 2px solid var(--border-glow);
+        border-radius: 15px;
+        padding: 25px 30px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .kategori-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 3px;
+        height: 100%;
+        background: var(--tech-gradient);
+        animation: categoryPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes categoryPulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+
+    .kategori-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--bright-blue);
+        margin: 0;
+        text-shadow: 0 0 15px currentColor;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .kategori-title::before {
+        content: '▶';
+        color: var(--bright-green);
+        font-size: 1.2rem;
+    }
+
+    /* Equipment Grid */
+    .alat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 40px;
+    }
+
+    /* Equipment Card */
+    .alat-card {
+        background: var(--glass-bg);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .alat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--tech-gradient);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .alat-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        border-color: var(--bright-blue);
+        box-shadow: 
+            0 20px 50px rgba(0, 0, 0, 0.4),
+            0 0 30px rgba(0, 212, 255, 0.3);
+    }
+
+    .alat-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    /* Image Container */
+    .alat-image-container {
+        width: 100%;
+        padding-top: 60%;
+        position: relative;
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.1));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .alat-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.4s ease;
+    }
+
+    .alat-card:hover .alat-image {
+        transform: scale(1.05);
+    }
+
+    .no-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.1));
+    }
+
+    .no-image i {
+        font-size: 3rem;
+        color: var(--bright-blue);
+        opacity: 0.5;
+    }
+
+    /* Card Info */
+    .alat-info {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .alat-info h5 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-white);
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    }
+
+    .alat-info p {
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .alat-info p strong {
+        color: var(--bright-green);
+        font-weight: 600;
+        min-width: 60px;
+    }
+
+    /* Status Badge */
+    .status-container {
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .status-badge {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-family: 'JetBrains Mono', monospace;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid;
+        transition: all 0.3s ease;
+    }
+
+    .status-tersedia {
+        background: rgba(0, 255, 136, 0.2);
+        color: var(--bright-green);
+        border-color: var(--bright-green);
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+
+    .status-dipinjam {
+        background: rgba(255, 255, 0, 0.2);
+        color: var(--bright-yellow);
+        border-color: var(--bright-yellow);
+        box-shadow: 0 0 15px rgba(255, 255, 0, 0.3);
+    }
+
+    .status-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: statusPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes statusPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Back Button */
+    .back-container {
+        text-align: center;
+        margin-top: 60px;
+    }
+
+    .back-btn {
+        background: var(--glass-bg);
+        border: 2px solid var(--border-glow);
+        color: var(--primary-white);
+        padding: 15px 30px;
+        border-radius: 15px;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .back-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        border-color: var(--bright-blue);
+        color: var(--bright-blue);
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    }
+
+    .back-btn:hover::before {
+        left: 100%;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-title h1 {
+            font-size: 2rem;
+        }
+
+        .kategori-title {
+            font-size: 1.4rem;
+        }
+
+        .alat-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .alat-card {
+            margin-bottom: 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main-title {
+            padding: 25px;
+        }
+
+        .kategori-header {
+            padding: 20px;
+        }
+
+        .alat-info {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="container my-5">
+    <!-- Main Title Section -->
+    <div class="main-title">
+        <h1>
+            <i class="fas fa-flask me-3"></i>
+            DAFTAR ALAT LABORATORIUM
+        </h1>
+        <p>Semua peralatan yang tersedia untuk dipinjam dalam sistem manajemen laboratorium.</p>
+    </div>
+
+    <!-- Equipment Categories -->
+    {% for kategori_utama in semua_kategori_utama %}
+        <div class="kategori-section">
+            <div class="kategori-header">
+                <h2 class="kategori-title">
+                    <i class="fas fa-microchip"></i>
+                    {{ kategori_utama.nama }}
+                </h2>
+            </div>
+            
+            <div class="alat-grid">
+                {% for jenis_alat in kategori_utama.sub_kategori.all %}
+                    {% for unit in jenis_alat.unit_alat.all %}
+                        <div class="alat-card">
+                            <div class="alat-image-container">
+                                {% if unit.foto %}
+                                    <img src="{{ unit.foto.url }}" alt="Foto {{ unit.tipe_atau_merk }}" class="alat-image">
+                                {% else %}
+                                    <div class="no-image">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="alat-info">
+                                <h5>{{ unit.tipe_atau_merk }}</h5>
+                                
+                                <p>
+                                    <strong>JENIS:</strong>
+                                    <span>{{ jenis_alat.nama }}</span>
+                                </p>
+                                
+                                <p>
+                                    <strong>SN:</strong>
+                                    <span>{{ unit.serial_number }}</span>
+                                </p>
+                                
+                                <div class="status-container">
+                                    <div class="status-badge {% if unit.status == 'Tersedia' %}status-tersedia{% else %}status-dipinjam{% endif %}">
+                                        {{ unit.status }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    
+    <!-- Back Button -->
+    <!-- <div class="back-container">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>KEMBALI</span>
+        </a>
+    </div> -->
+</div>
+{% endblock %}

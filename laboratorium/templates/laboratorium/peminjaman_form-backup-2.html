@@ -1,0 +1,235 @@
+{% extends 'laboratorium/base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="text-center mb-5">
+            <div class="header-icon mb-3">
+                <i class="fas fa-edit fa-3x"></i>
+            </div>
+            <h2 class="display-6 fw-bold mb-2">Form Peminjaman Alat</h2>
+            <p class="lead text-muted">{{ lab.nama }}</p>
+            <div class="header-divider"></div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-card">
+            <div class="card-body p-4 p-md-5">
+                <form method="post" id="peminjamanForm">
+                    {% csrf_token %}
+
+                    <h5 class="mb-4">1. Data Peminjam</h5>
+
+                    <div class="form-group-custom">
+                        {{ form.nama_lengkap.label_tag }}
+                        {{ form.nama_lengkap }}
+                    </div>
+
+                    <div class="form-group-custom">
+                        {{ form.status_peminjam.label_tag }}
+                        {{ form.status_peminjam }}
+                    </div>
+
+                    <div class="form-group-custom">
+                        {{ form.nrp_nip.label_tag }}
+                        {{ form.nrp_nip }}
+                    </div>
+
+                    <div class="form-group-custom">
+                        {{ form.nomor_telepon.label_tag }}
+                        {{ form.nomor_telepon }}
+                    </div>
+
+                    <div class="form-group-custom">
+                        {{ form.dosen_perkuliahan.label_tag }}
+                        {{ form.dosen_perkuliahan }}
+                    </div>
+                    
+                    <div class="form-group-custom">
+                        {{ form.nama_plp.label_tag }}
+                        {{ form.nama_plp }}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-4">2. Detail Peminjaman</h5>
+
+                    <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" type="checkbox" id="is-alat-baru-checkbox" name="is_alat_baru_checkbox">
+                        <label class="form-check-label" for="is-alat-baru-checkbox">
+                            Alat yang dicari tidak ada? Ajukan peminjaman alat baru.
+                        </label>
+                    </div>
+
+
+                    <div id="peminjaman-standar">
+                        <div class="form-group-custom">
+                            <label for="kategori-select">Kategori Alat</label>
+                            <select id="kategori-select" class="form-select">
+                                <option value="">--- Pilih Kategori ---</option>
+                                {% for kategori in kategori_list %}
+                                    {% if kategori.id|stringformat:"s" in alat_json %}
+                                        <option value="{{ kategori.id }}">{{ kategori.nama }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="id_unit_alat">Unit Alat Tersedia</label>
+                            <select name="unit_alat" id="id_unit_alat" class="form-select" required disabled>
+                                <option value="">--- Pilih Kategori Terlebih Dahulu ---</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="peminjaman-alat-baru" style="display: none;">
+                        <div class="alert alert-info small">
+                            Anda sedang mengajukan peminjaman untuk alat yang belum terdaftar. Data ini akan otomatis disetujui dan bukti peminjaman (PDF) akan dibuat untuk diserahkan ke PLP.
+                        </div>
+                        <div class="form-group-custom">
+                            <label for="id_nama_alat_baru">Nama Alat yang Diajukan</label>
+                            <input type="text" name="nama_alat_baru" id="id_nama_alat_baru" class="form-control">
+                        </div>
+                        <div class="form-group-custom">
+                            <label for="id_tipe_alat_baru">Tipe/Merk Alat</label>
+                            <input type="text" name="tipe_alat_baru" id="id_tipe_alat_baru" class="form-control">
+                        </div>
+                        <div class="form-group-custom">
+                            <label for="id_sn_alat_baru">Serial Number (Opsional)</label>
+                            <input type="text" name="sn_alat_baru" id="id_sn_alat_baru" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group-custom">
+                        {{ form.catatan_kondisi.label_tag }}
+                        {{ form.catatan_kondisi }}
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Kirim Permintaan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-card { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .form-group-custom { margin-bottom: 1.25rem; }
+    .form-group-custom label { font-weight: 600; margin-bottom: 0.5rem; display: block; }
+    /* Pastikan input dan select dari Django form mengambil style yang sama */
+    .form-group-custom input, .form-group-custom select, .form-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #ced4da;
+    }
+    .header-icon { display: none; } /* Contoh menyembunyikan elemen jika perlu */
+    .header-divider { display: none; }
+</style>
+
+<script>
+    // Ambil data JSON yang dikirim dari view (ini sudah benar)
+    const alatData = JSON.parse('{{ alat_json|escapejs }}');
+
+    // Dapatkan elemen dropdown dari HTML (ini sudah benar)
+    const kategoriDropdown = document.getElementById('kategori-select');
+    const unitAlatDropdown = document.getElementById('id_unit_alat');
+
+    // Tambahkan event listener ke dropdown kategori (ini sudah benar)
+    kategoriDropdown.addEventListener('change', function() {
+        // ... (KODE LAMA ANDA UNTUK MENGISI DROPDOWN UNIT ALAT TETAP DI SINI, TIDAK PERLU DIUBAH)
+        unitAlatDropdown.innerHTML = '';
+        const selectedKategoriId = this.value;
+
+        if (selectedKategoriId) {
+            unitAlatDropdown.disabled = false;
+            let defaultOption = new Option('--- Pilih Unit Alat ---', '');
+            unitAlatDropdown.add(defaultOption);
+
+            const alatList = alatData[selectedKategoriId];
+            if (alatList && alatList.length > 0) {
+                alatList.forEach(function(alat) {
+                    let optionText = `${alat.tipe_atau_merk} (SN: ${alat.serial_number})`;
+                    let newOption = new Option(optionText, alat.id);
+                    if (alat.status !== 'Tersedia') {
+                        newOption.disabled = true;
+                        newOption.text += ` (Status: ${alat.status})`;
+                        newOption.style.color = '#a9a9a9';
+                        newOption.style.fontStyle = 'italic';
+                    }
+                    unitAlatDropdown.add(newOption);
+                });
+            } else {
+                 unitAlatDropdown.innerHTML = '<option value="">-- Tidak ada alat di kategori ini --</option>';
+            }
+        } else {
+            unitAlatDropdown.disabled = true;
+            unitAlatDropdown.innerHTML = '<option value="">--- Pilih Kategori Terlebih Dahulu ---</option>';
+        }
+    });
+
+    // =======================================================
+    // === TAMBAHKAN SEMUA KODE JAVASCRIPT BARU DI BAWAH INI ===
+    // =======================================================
+    const isAlatBaruCheckbox = document.getElementById('is-alat-baru-checkbox');
+    const peminjamanStandarDiv = document.getElementById('peminjaman-standar');
+    const peminjamanAlatBaruDiv = document.getElementById('peminjaman-alat-baru');
+    
+    // Ambil input-input yang relevan untuk validasi
+    const namaAlatBaruInput = document.getElementById('id_nama_alat_baru');
+    const tipeAlatBaruInput = document.getElementById('id_tipe_alat_baru');
+    const catatanKondisiText = document.getElementById('id_catatan_kondisi');
+
+    isAlatBaruCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Jika checkbox dicentang: Tampilkan form alat baru, sembunyikan yang standar
+            peminjamanStandarDiv.style.display = 'none';
+            peminjamanAlatBaruDiv.style.display = 'block';
+            
+            // Hapus kewajiban mengisi dropdown standar
+            unitAlatDropdown.required = false;
+
+            // Tambah kewajiban mengisi input alat baru dan catatan kondisi
+            namaAlatBaruInput.required = true;
+            tipeAlatBaruInput.required = true;
+            catatanKondisiText.required = true;
+        } else {
+            // Jika checkbox tidak dicentang: Kembalikan seperti semula
+            peminjamanStandarDiv.style.display = 'block';
+            peminjamanAlatBaruDiv.style.display = 'none';
+
+            // Kembalikan kewajiban mengisi dropdown standar
+            unitAlatDropdown.required = true;
+
+            // Hapus kewajiban mengisi input alat baru dan catatan
+            namaAlatBaruInput.required = false;
+            tipeAlatBaruInput.required = false;
+            catatanKondisiText.required = false;
+        }
+    });
+
+    // Kode ini untuk memberi style pada inputan Django, biarkan saja
+    document.addEventListener('DOMContentLoaded', function() {
+        const formFields = document.querySelectorAll('#peminjamanForm select, #peminjamanForm input, #peminjamanForm textarea');
+        formFields.forEach(function(field) {
+            if (!field.classList.contains('form-select')) {
+                field.classList.add('form-control');
+            }
+        });
+    });
+</script>
+{% endblock %}

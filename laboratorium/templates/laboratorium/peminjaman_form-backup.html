@@ -1,0 +1,44 @@
+{% extends 'laboratorium/base.html' %}
+{% block content %}
+<h2 class="my-4">Form Peminjaman Alat - {{ lab.nama }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Kirim Permintaan</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const alatSelect = document.getElementById('id_alat');
+    const stokDisplay = document.createElement('small');
+    stokDisplay.className = 'form-text text-muted';
+    alatSelect.parentNode.appendChild(stokDisplay);
+
+    const alatStok = {
+        {% for alat in alat_list %}
+            "{{ alat.pk }}": {{ alat.jumlah_tersedia }},
+        {% endfor %}
+    };
+
+    function updateStok() {
+        const selectedAlatId = alatSelect.value;
+        if (selectedAlatId && alatStok[selectedAlatId] !== undefined) {
+            stokDisplay.textContent = `Stok tersedia: ${alatStok[selectedAlatId]}`;
+        } else {
+            stokDisplay.textContent = '';
+        }
+    }
+
+    // Disable options with 0 stock
+    Array.from(alatSelect.options).forEach(option => {
+        if (option.value && alatStok[option.value] === 0) {
+            option.disabled = true;
+            option.textContent += ' (Stok Habis)';
+        }
+    });
+
+    alatSelect.addEventListener('change', updateStok);
+    updateStok();
+});
+</script>
+{% endblock %}

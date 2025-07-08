@@ -1,0 +1,19 @@
+haloo bantu saya dong mengerjakan tugas saya, inii saya mendapatkan project dari kampus orang lain, berarti skalanya besar dong ya universitas soalnya.
+
+tugasnya yaitu disuruh membuat website untuk mengatur 4 laboratorium pada web tersebut itu nanti ada sistem login plp sama prodi. nah disini saya inginnya menggunakan django dan postgresql dan frontendnya terserah anda enaknya apa.
+
+karena django terdapat fitur admin panel nah saya rencanya nanti plp masuknya ke admin panel tersebut. pada admin panel nanti plp bisa menambahkan laboratorium, alat yang dipinjamkan serta user prodi dan terdapat fitur fitur peminjaman dan pengembalian nah fitur itu hanya dibuat untuk database gitu jadi nanti ada banyak notifikasi jika banyak yg pinjam, dan nanti fitur tersebut berikan fitur untuk filter jadi nanti bisa diurutkan sesuai pembaruan, terlama atau sesuai tanggal yg diinginkan. nah untuk plp login admin panelnya harus menggunakan @gmail.com selain itu tidak boleh dan kita buas pass nya 123. ohya buatkan ketika admin memasukan nama alat maka harus mengisi jumlahnya juga jadi misal masukkan alat mikrotik maka harus mengisi jumlahnya juga.
+
+kemudian pada webnya itu halaman awal mahasiswa harus masuk dengan user prodi misal saya buat usernya tri dan pw nya tri juga, nah setelah login maka masuk ke tampilan dashboard web yaitu terdapat pilihan lab lab yg tersedia jadi nanti pada frontend buat labnya lab 1 sebelah kanan atas, lab 2 sebelah kanan bawah, lab 3 sebelah kiri atas, lab 4 sebelah kiri bawah.
+
+nah setelah memilih lab maka mahasiswa akan memilih peminjaman atau pengembalian
+
+jika peminjaman maka, mahasiswa mengisi nama lengkap, peminjaman terdapat pilihan dosen, karyawan, mahasiswa, kemudian mahasiswa mengisi nrp/nip, kemudian mahasiswa mengisi tanggal peminjaman, kemudian mahasiswa mengisi nomer telepon, kemudian mahasiswa terdapat pilihan alat yg mau dipinjam (nama alat tergantung plp menyediakan apa aja & tambahkan ketika alat apa yg dipinjam maka harus sesuaikan didatabase jumlah persediannya jadi kayak shope gitu, ketika pilih mikrotik maka akan menampilkan stok yg tersedia berapa gitu, dan ketika stoknya habis maka barang tersebut tidak bisa diklick atau dipilih), kemudian terdapat inputan jumlah , kemudian terdapat pilihan kondisi yaitu baik, rusak, minus, kemudian mahasiswa mengisi nama dosen perkuliahan pada lab itu, dan mahasiswa mengisi nama plpnya.
+
+setelah mengirim atau mengisi form itu maka akan masuk ke fitur admin panel dan plp masuk ke fitur peminjaman untuk melihat notifikasi aja bahwa ada yg pinjam alat dan tambahkan data diri mereka serta barang apa yg dipinjam
+
+jika pengembalian maka, mahasiswa mengisi nama lengkap, barang apa aja yg dikembalikan, mahasiswa memilih pilihan kondisi barang baik, rusak, minus, mahasiswa menginputkan jumlah barang, mahasiswa memasukkan tanggal pengembalian, dan nama plpnya.
+
+setelah mengirim atau mengisi form itu maka akan masuk ke fitur admin panel dan plp masuk ke fitur pengembalian untuk melihat notifikasi aja bahwa ada yg mengembalikan alat dan tambahkan data diri mereka serta barang apa yg dikembalikan
+
+nah sekarang buatkan proyeknya starter full secara detail dan lengkap jika pakai venv maka kasih tau mana aja yg digunakan atau diinstall dalam venv, jika tidak misal databse maka kasih caption diinstall diluar aja, ibaratkan aku sebagai orang awam yang kurang tahu jadi sedetail'nya dan juga saya pakai os kali linux

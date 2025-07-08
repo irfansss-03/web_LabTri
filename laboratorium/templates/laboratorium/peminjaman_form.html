@@ -1,0 +1,602 @@
+{% extends 'laboratorium/base.html' %}
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="form-header text-center mb-5">
+                <div class="header-glow">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h1 class="header-title engineering-text">FORM PEMINJAMAN ALAT</h1>
+                <p class="header-subtitle">{{ lab.nama }}</p>
+                <div class="header-line"></div>
+            </div>
+
+            {% if messages or form.errors %}
+                <div class="alert alert-dismissible fade show {% if form.errors %}alert-danger{% else %}alert-info{% endif %}" role="alert">
+                    <strong>{% if form.errors %}SYSTEM ERROR:{% else %}SYSTEM INFO:{% endif %}</strong>
+                    <ul class="my-0 ps-3">
+                        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                        {% for field in form %}{% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}{% endfor %}
+                        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+
+            <div class="form-container">
+                <form method="post" id="peminjamanForm">
+                    {% csrf_token %}
+                    
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <h3 class="engineering-text">DATA PEMINJAM</h3>
+                        </div>
+                        <div class="form-grid">
+                            {% for field in form %}
+                                {% if field.name in "nama_lengkap,status_peminjam,nrp_nip,nomor_telepon,dosen_perkuliahan,nama_plp" %}
+                                <div class="form-group">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <h3 class="engineering-text">DETAIL PEMINJAMAN</h3>
+                        </div>
+
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input class="form-check-input" type="checkbox" id="is-alat-baru-checkbox" name="is_alat_baru_checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <div class="toggle-label">
+                                <span class="engineering-text">AJUKAN ALAT BARU</span>
+                                <div class="toggle-subtitle">Alat yang dicari tidak tersedia dalam database</div>
+                            </div>
+                        </div>
+
+                        <div id="peminjaman-standar">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="kategori-alat-select">1. SELECT KATEGORI ALAT</label>
+                                    <select id="kategori-alat-select" class="form-select">
+                                        <option value="">--- PILIH KATEGORI ---</option>
+                                        {% for kategori in kategori_alat_list %}
+                                            <option value="{{ kategori.id }}">{{ kategori.nama }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="jenis-alat-select">2. SELECT JENIS ALAT</label>
+                                    <select id="jenis-alat-select" class="form-select" disabled>
+                                        <option value="">--- PILIH KATEGORI DULU ---</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group full-width mt-3">
+                                <label for="id_unit_alat">3. SELECT UNIT ALAT</label>
+                                <select name="unit_alat" id="id_unit_alat" class="form-select" required disabled>
+                                    <option value="">--- PILIH JENIS ALAT DULU ---</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="peminjaman-alat-baru" style="display: none;">
+                            <div class="info-box">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <p class="engineering-text">SISTEM ALAT BARU AKTIF</p>
+                                    <p>Data akan diproses otomatis dan dokumen PDF akan digenerate untuk PLP</p>
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="id_nama_alat_baru">NAMA ALAT</label>
+                                    <input type="text" name="nama_alat_baru" id="id_nama_alat_baru" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_tipe_alat_baru">TIPE/MERK</label>
+                                    <input type="text" name="tipe_alat_baru" id="id_tipe_alat_baru" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_sn_alat_baru">SERIAL NUMBER</label>
+                                    <input type="text" name="sn_alat_baru" id="id_sn_alat_baru" class="form-control" placeholder="[OPTIONAL]">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group full-width mt-3">
+                             <label for="id_catatan_kondisi">CATATAN KONDISI</label>
+                             <textarea name="catatan_kondisi" id="id_catatan_kondisi" class="form-control" rows="3" placeholder="Deskripsikan kondisi barang..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="submit-container">
+                        <button type="submit" class="submit-btn ripple">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>SUBMIT REQUEST</span>
+                            <div class="btn-glow"></div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Form Container */
+.form-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--border-glow);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(0, 212, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-gradient);
+    border-radius: 16px 16px 0 0;
+}
+
+/* Header Styles */
+.form-header {
+    margin-bottom: 3rem;
+}
+
+.header-glow {
+    display: inline-block;
+    padding: 1.5rem;
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    box-shadow: 
+        0 10px 30px rgba(0, 212, 255, 0.3),
+        0 0 20px rgba(0, 212, 255, 0.2);
+    animation: engineeringGlow 3s ease-in-out infinite alternate;
+}
+
+.header-glow i {
+    font-size: 2.5rem;
+    color: var(--primary-white);
+}
+
+.header-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-white);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.header-subtitle {
+    font-size: 1.2rem;
+    color: var(--bright-blue);
+    margin-bottom: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.header-line {
+    width: 100px;
+    height: 3px;
+    background: var(--tech-gradient);
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+/* Section Styles */
+.form-section {
+    margin-bottom: 2.5rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-glow);
+}
+
+.section-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--tech-gradient);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+}
+
+.section-icon i {
+    font-size: 1.2rem;
+    color: var(--primary-white);
+}
+
+.section-header h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-white);
+    margin: 0;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    position: relative;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    color: var(--primary-white);
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.form-control:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--bright-blue);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+    background: var(--glass-bg);
+    color: var(--primary-white) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Toggle Switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-glow);
+    backdrop-filter: blur(10px);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-right: 1rem;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-glow);
+    border-radius: 34px;
+    transition: 0.4s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background: var(--primary-white);
+    border-radius: 50%;
+    transition: 0.4s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .toggle-slider {
+    background: var(--tech-gradient);
+    border-color: var(--bright-blue);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-label span {
+    color: var(--bright-blue);
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.toggle-subtitle {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.25rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Info Box */
+.info-box {
+    background: var(--card-bg);
+    border: 1px solid var(--bright-yellow);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.1);
+}
+
+.info-box i {
+    color: var(--bright-yellow);
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    margin-top: 0.2rem;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.info-box p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.info-box p:first-child {
+    color: var(--bright-yellow);
+    font-weight: 600;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.info-box p:last-child {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.5rem;
+}
+
+/* Submit Button */
+.submit-container {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.submit-btn {
+    position: relative;
+    padding: 1rem 3rem;
+    background: var(--primary-gradient);
+    border: 2px solid var(--bright-blue);
+    border-radius: 12px;
+    color: var(--primary-white);
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    box-shadow: 
+        0 10px 30px rgba(0, 212, 255, 0.3),
+        0 0 20px rgba(0, 212, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 15px 40px rgba(0, 212, 255, 0.4),
+        0 0 30px rgba(0, 212, 255, 0.3);
+    border-color: var(--bright-green);
+}
+
+.submit-btn:hover::before {
+    left: 100%;
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.btn-glow {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    left: -2px;
+    background: var(--tech-gradient);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.submit-btn:hover .btn-glow {
+    opacity: 1;
+}
+
+/* Alert Styles */
+.alert {
+    background: var(--card-bg);
+    border: 1px solid var(--bright-yellow);
+    border-radius: 12px;
+    color: var(--primary-white);
+    backdrop-filter: blur(10px);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.alert-danger {
+    border-color: #ff4757;
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.2);
+}
+
+.alert-info {
+    border-color: var(--bright-blue);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1.5rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .header-title {
+        font-size: 2rem;
+    }
+    
+    .toggle-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const jenisAlatData = JSON.parse('{{ jenis_alat_json|escapejs }}');
+    const unitAlatData = JSON.parse('{{ unit_alat_json|escapejs }}');
+    
+    const kategoriAlatDropdown = document.getElementById('kategori-alat-select');
+    const jenisAlatDropdown = document.getElementById('jenis-alat-select');
+    const unitAlatDropdown = document.getElementById('id_unit_alat'); 
+    
+    const isAlatBaruCheckbox = document.getElementById('is-alat-baru-checkbox');
+    const peminjamanStandarDiv = document.getElementById('peminjaman-standar');
+    const peminjamanAlatBaruDiv = document.getElementById('peminjaman-alat-baru');
+    
+    const namaAlatBaruInput = document.getElementById('id_nama_alat_baru');
+    const tipeAlatBaruInput = document.getElementById('id_tipe_alat_baru');
+    
+    // Dropdown Logic
+    kategoriAlatDropdown.addEventListener('change', function() {
+        jenisAlatDropdown.innerHTML = '<option value="">--- PILIH JENIS ALAT ---</option>';
+        unitAlatDropdown.innerHTML = '<option value="">--- PILIH JENIS ALAT DULU ---</option>';
+        jenisAlatDropdown.disabled = true;
+        unitAlatDropdown.disabled = true;
+        const selectedKategoriId = this.value;
+        if (selectedKategoriId && jenisAlatData[selectedKategoriId]) {
+            jenisAlatData[selectedKategoriId].forEach(function(jenis) {
+                jenisAlatDropdown.add(new Option(jenis.nama, jenis.id));
+            });
+            jenisAlatDropdown.disabled = false;
+        }
+    });
+
+    jenisAlatDropdown.addEventListener('change', function() {
+        unitAlatDropdown.innerHTML = '<option value="">--- PILIH UNIT ALAT ---</option>';
+        unitAlatDropdown.disabled = true;
+        const selectedJenisAlatId = this.value;
+        if (selectedJenisAlatId && unitAlatData[selectedJenisAlatId]) {
+            unitAlatData[selectedJenisAlatId].forEach(function(unit) {
+                let optionText = `${unit.tipe_atau_merk} (SN: ${unit.serial_number})`;
+                let newOption = new Option(optionText, unit.id);
+                if (unit.status !== 'Tersedia') {
+                    newOption.disabled = true;
+                    newOption.text += ` [${unit.status}]`;
+                }
+                unitAlatDropdown.add(newOption);
+            });
+            unitAlatDropdown.disabled = false;
+        }
+    });
+
+    // Toggle Logic
+    isAlatBaruCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        peminjamanStandarDiv.style.display = isChecked ? 'none' : 'block';
+        peminjamanAlatBaruDiv.style.display = isChecked ? 'block' : 'none';
+        
+        unitAlatDropdown.required = !isChecked;
+        if (namaAlatBaruInput) namaAlatBaruInput.required = isChecked;
+        if (tipeAlatBaruInput) tipeAlatBaruInput.required = isChecked;
+    });
+
+    // Apply theme classes
+    document.querySelectorAll('.form-group input, .form-group select, .form-group textarea').forEach(field => {
+        if (!field.classList.contains('form-check-input')) {
+            field.classList.add('form-control');
+        }
+    });
+});
+</script>
+{% endblock %}
