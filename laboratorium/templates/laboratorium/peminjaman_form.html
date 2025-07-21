@@ -7,7 +7,7 @@
                 <div class="header-glow">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
-                <h1 class="header-title engineering-text">FORM PEMINJAMAN ALAT</h1>
+                <h1 class="header-title engineering-text">EQUIPMENT LOAN FORM</h1>
                 <p class="header-subtitle">{{ lab.nama }}</p>
                 <div class="header-line"></div>
             </div>
@@ -33,7 +33,7 @@
                             <div class="section-icon">
                                 <i class="fas fa-user-shield"></i>
                             </div>
-                            <h3 class="engineering-text">DATA PEMINJAM</h3>
+                            <h3 class="engineering-text">BORROWER INFORMATION</h3>
                         </div>
                         <div class="form-grid">
                             {% for field in form %}
@@ -52,7 +52,7 @@
                             <div class="section-icon">
                                 <i class="fas fa-tools"></i>
                             </div>
-                            <h3 class="engineering-text">DETAIL PEMINJAMAN</h3>
+                            <h3 class="engineering-text">LOAN DETAILS</h3>
                         </div>
 
                         <div class="toggle-container">
@@ -61,33 +61,33 @@
                                 <span class="toggle-slider"></span>
                             </label>
                             <div class="toggle-label">
-                                <span class="engineering-text">AJUKAN ALAT BARU</span>
-                                <div class="toggle-subtitle">Alat yang dicari tidak tersedia dalam database</div>
+                                <span class="engineering-text">REQUEST NEW EQUIPMENT</span>
+                                <div class="toggle-subtitle">The equipment you're looking for is not available in the equipment list</div>
                             </div>
                         </div>
 
                         <div id="peminjaman-standar">
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="kategori-alat-select">1. SELECT KATEGORI ALAT</label>
+                                    <label for="kategori-alat-select">Select Equipment Category</label>
                                     <select id="kategori-alat-select" class="form-select">
-                                        <option value="">--- PILIH KATEGORI ---</option>
+                                        <option value="">--- Choose Category ---</option>
                                         {% for kategori in kategori_alat_list %}
                                             <option value="{{ kategori.id }}">{{ kategori.nama }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="jenis-alat-select">2. SELECT JENIS ALAT</label>
+                                    <label for="jenis-alat-select">Select Equipment Type</label>
                                     <select id="jenis-alat-select" class="form-select" disabled>
-                                        <option value="">--- PILIH KATEGORI DULU ---</option>
+                                        <option value="">--- Please select a category first ---</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group full-width mt-3">
-                                <label for="id_unit_alat">3. SELECT UNIT ALAT</label>
+                                <label for="id_unit_alat">Select Equipment Unit</label>
                                 <select name="unit_alat" id="id_unit_alat" class="form-select" required disabled>
-                                    <option value="">--- PILIH JENIS ALAT DULU ---</option>
+                                    <option value="">--- Please select an equipment type first ---</option>
                                 </select>
                             </div>
                         </div>
@@ -96,17 +96,17 @@
                             <div class="info-box">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <div>
-                                    <p class="engineering-text">SISTEM ALAT BARU AKTIF</p>
-                                    <p>Data akan diproses otomatis dan dokumen PDF akan digenerate untuk PLP</p>
+                                    <p class="engineering-text">NEW EQUIPMENT REQUEST SYSTEM</p>
+                                    <p>Your data will be processed automatically. A PDF will be generated for submission to the lab technician (PLP).</p>
                                 </div>
                             </div>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="id_nama_alat_baru">NAMA ALAT</label>
+                                    <label for="id_nama_alat_baru"> Equipment Name</label>
                                     <input type="text" name="nama_alat_baru" id="id_nama_alat_baru" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label for="id_tipe_alat_baru">TIPE/MERK</label>
+                                    <label for="id_tipe_alat_baru">Type/Brand</label>
                                     <input type="text" name="tipe_alat_baru" id="id_tipe_alat_baru" class="form-control">
                                 </div>
                                 <div class="form-group">
@@ -117,8 +117,8 @@
                         </div>
                         
                         <div class="form-group full-width mt-3">
-                             <label for="id_catatan_kondisi">CATATAN KONDISI</label>
-                             <textarea name="catatan_kondisi" id="id_catatan_kondisi" class="form-control" rows="3" placeholder="Deskripsikan kondisi barang..."></textarea>
+                             <label for="id_catatan_kondisi">Equipment Condition Notes</label>
+                             <textarea name="catatan_kondisi" id="id_catatan_kondisi" class="form-control" rows="3" placeholder="Item Condition Description..."></textarea>
                         </div>
                     </div>
 
@@ -288,7 +288,7 @@
     outline: none;
     border-color: var(--bright-blue);
     box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
-    background: var(--glass-bg);
+    background: #161D1C;
     color: var(--primary-white) !important;
 }
 
@@ -330,7 +330,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--card-bg);
+    background: black;
     border: 1px solid var(--border-glow);
     border-radius: 34px;
     transition: 0.4s;
@@ -343,7 +343,7 @@
     width: 26px;
     left: 4px;
     bottom: 4px;
-    background: var(--primary-white);
+    background: white;
     border-radius: 50%;
     transition: 0.4s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -549,8 +549,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Dropdown Logic
     kategoriAlatDropdown.addEventListener('change', function() {
-        jenisAlatDropdown.innerHTML = '<option value="">--- PILIH JENIS ALAT ---</option>';
-        unitAlatDropdown.innerHTML = '<option value="">--- PILIH JENIS ALAT DULU ---</option>';
+        jenisAlatDropdown.innerHTML = '<option value="">--- Choose Equipment Type ---</option>';
+        unitAlatDropdown.innerHTML = '<option value="">--- Select equipment type first ---</option>';
         jenisAlatDropdown.disabled = true;
         unitAlatDropdown.disabled = true;
         const selectedKategoriId = this.value;
@@ -563,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     jenisAlatDropdown.addEventListener('change', function() {
-        unitAlatDropdown.innerHTML = '<option value="">--- PILIH UNIT ALAT ---</option>';
+        unitAlatDropdown.innerHTML = '<option value="">--- Choose Equipment Unit ---</option>';
         unitAlatDropdown.disabled = true;
         const selectedJenisAlatId = this.value;
         if (selectedJenisAlatId && unitAlatData[selectedJenisAlatId]) {

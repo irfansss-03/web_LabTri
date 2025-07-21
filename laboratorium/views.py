@@ -12,6 +12,9 @@ from .forms import PeminjamanForm, PengembalianForm
 from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth.views import LogoutView
+import base64
+from django.conf import settings
+import os
 
 def login_view(request):
     error = None
@@ -28,12 +31,28 @@ def login_view(request):
                 error = "Halaman ini hanya untuk login Prodi/Mahasiswa."
         else:
             error = "Username atau password salah."
-    return render(request, 'laboratorium/login.html', {'error': error})
+    return render(request, 'laboratorium/login.html', {'error': error, 'hide_back_button': True})
 
 @login_required(login_url='/login/')
 def dashboard_view(request):
     laboratories = Laboratorium.objects.all()
-    return render(request, 'laboratorium/dashboard.html', {'laboratories': laboratories})
+    # --- LOGIKA BARU UNTUK MEMBACA FILE LOGO ---
+    logo_filename = 'logo-tri.png' 
+    
+    # Path ini adalah cara yang benar untuk server development
+    logo_path = os.path.join(settings.BASE_DIR, 'laboratorium', 'static', 'laboratorium', 'images', logo_filename)
+    logo_data = None
+    try:
+        with open(logo_path, 'rb') as f:
+            logo_data = base64.b64encode(f.read()).decode('utf-8')
+    except FileNotFoundError:
+        print(f"ERROR: Logo untuk dashboard tidak ditemukan di path: {logo_path}")
+    # --- BATAS LOGIKA BARU ---
+    context = {
+        'laboratories': laboratories,
+        'logo_data': logo_data,
+    }
+    return render(request, 'laboratorium/dashboard.html', context)
 
 @login_required(login_url='/login/')
 def lab_detail_view(request, lab_pk):
@@ -65,15 +84,15 @@ def peminjaman_form_view(request, lab_pk):
                 peminjaman.tipe_alat_baru = request.POST.get('tipe_alat_baru')
                 peminjaman.sn_alat_baru = request.POST.get('sn_alat_baru')
                 peminjaman.save()
-                return render(request, 'laboratorium/sukses_versi_alat_baru.html', {'peminjaman': peminjaman})
+                return render(request, 'laboratorium/sukses_versi_alat_baru.html', {'peminjaman': peminjaman, 'hide_back_button': True})
             else:
                 unit_alat_id = request.POST.get('unit_alat')
                 if unit_alat_id:
                     peminjaman.unit_alat_id = unit_alat_id
                     peminjaman.is_alat_baru = False
                     peminjaman.save()
-                    pesan = "Permintaan peminjaman Anda telah berhasil terkirim."
-                    return render(request, 'laboratorium/sukses.html', {'pesan': pesan})
+                    pesan = "Your loan request has been successfully submitted."
+                    return render(request, 'laboratorium/sukses.html', {'pesan': pesan, 'hide_back_button': True})
                 else:
                     messages.error(request, "Anda wajib memilih unit alat yang tersedia.")
     else:
@@ -117,8 +136,8 @@ def pengembalian_form_view(request, lab_pk):
         form = PengembalianForm(request.POST, request.FILES, user=request.user, lab_pk=lab_pk)
         if form.is_valid():
             form.save()
-            pesan_sukses = "Laporan pengembalian Anda telah berhasil terkirim."
-            return render(request, 'laboratorium/sukses.html', {'pesan': pesan_sukses})
+            pesan_sukses = "Your return report was submitted successfully."
+            return render(request, 'laboratorium/sukses.html', {'pesan': pesan_sukses, 'hide_back_button': True})
     else:
         form = PengembalianForm(user=request.user, lab_pk=lab_pk)
     context = {'lab': lab, 'form': form}
@@ -127,7 +146,17 @@ def pengembalian_form_view(request, lab_pk):
 def generate_loan_pdf(request, peminjaman_id):
     peminjaman = get_object_or_404(Peminjaman, pk=peminjaman_id)
     template_path = 'laboratorium/loan_ticket.html'
-    context = {'peminjaman': peminjaman}
+    # --- LOGIKA BARU UNTUK MEMBACA LOGO ---
+    logo_path = os.path.join(settings.BASE_DIR, 'staticfiles/laboratorium/images/logo-pens.png')
+    logo_data = None
+    try:
+        with open(logo_path, 'rb') as f:
+            logo_data = base64.b64encode(f.read()).decode('utf-8')
+    except FileNotFoundError:
+        print("Logo tidak ditemukan di path:", {logo_path})
+    # --- BATAS LOGIKA BARU ---
+    context = {'peminjaman': peminjaman,
+               'logo_data': logo_data,}
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="bukti-peminjaman-{peminjaman.nama_lengkap}.pdf"'
     template = get_template(template_path)

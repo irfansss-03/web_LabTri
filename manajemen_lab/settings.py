@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&299gba-z!c@-y*pnvk7)#m%+9o36b06ro3=7-ju#n$*$w4_ea
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '192.168.1.10', '*']
 
 
 # Application definition
@@ -83,11 +83,12 @@ WSGI_APPLICATION = 'manajemen_lab.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_lab',
-        'USER': 'user_lab',
-        'PASSWORD': 'password_lab_yang_aman',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': 'labtridb3',
+        'USER': 'adminlabtri3',
+        'PASSWORD': 'AdminLabTri2023toTRI3',
+        'HOST': '3lab',
+        'PORT': '5432', 
+        # 24434
     }
 }
 
@@ -131,6 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

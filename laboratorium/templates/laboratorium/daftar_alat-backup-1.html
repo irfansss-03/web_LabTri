@@ -1,0 +1,447 @@
+{% extends 'laboratorium/base.html' %}
+{% block content %}
+<style>
+    /* Main Title Section */
+    .main-title {
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-primary);
+        border-radius: var(--radius-xl);
+        padding: 3rem;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+        backdrop-filter: blur(10px);
+    }
+
+    .main-title::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        animation: titleSweep 3s linear infinite;
+    }
+
+    @keyframes titleSweep {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .main-title h1 {
+        font-family: 'JetBrains Mono', monospace;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .main-title p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    /* Category Section */
+    .kategori-section {
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .kategori-header {
+        background: var(--bg-tertiary);
+        border: 2px solid var(--border-secondary);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+    }
+
+    .kategori-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary), var(--accent));
+        animation: categoryPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes categoryPulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+
+    .kategori-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .kategori-title i {
+        color: var(--primary);
+        text-shadow: 0 0 10px currentColor;
+    }
+
+    /* Equipment Grid */
+    .alat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Equipment Card */
+    .alat-card {
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-primary);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        transition: var(--transition-smooth);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-md);
+        will-change: transform, box-shadow;
+    }
+
+    .alat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+        transform-origin: left;
+    }
+
+    .alat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: var(--primary);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .alat-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    /* Image Container */
+    .alat-image-container {
+        width: 100%;
+        padding-top: 60%;
+        position: relative;
+        background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-muted));
+        border-bottom: 1px solid var(--border-primary);
+    }
+
+    .alat-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition-smooth);
+    }
+
+    .alat-card:hover .alat-image {
+        transform: scale(1.05);
+    }
+
+    .no-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle, var(--bg-tertiary), var(--bg-secondary));
+    }
+
+    .no-image i {
+        font-size: 3rem;
+        color: var(--text-muted);
+        opacity: 0.6;
+    }
+
+    /* Card Info */
+    .alat-info {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .alat-info h5 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        text-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    }
+
+    .alat-info p {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .alat-info p strong {
+        color: var(--primary);
+        font-weight: 600;
+        min-width: 60px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Status Badge */
+    .status-container {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-primary);
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-lg);
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-family: 'JetBrains Mono', monospace;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid;
+        transition: var(--transition-base);
+    }
+
+    .status-tersedia {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--success);
+        border-color: var(--success);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .status-dipinjam {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+        border-color: var(--warning);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .status-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: statusPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes statusPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-title {
+            padding: 2rem;
+        }
+
+        .main-title h1 {
+            font-size: 2rem;
+        }
+
+        .kategori-title {
+            font-size: 1.4rem;
+        }
+
+        .alat-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .kategori-header {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .alat-info {
+            padding: 1.25rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main-title {
+            padding: 1.5rem;
+        }
+
+        .main-title h1 {
+            font-size: 1.8rem;
+        }
+
+        .kategori-header {
+            padding: 1rem 1.25rem;
+        }
+
+        .alat-info {
+            padding: 1rem;
+        }
+
+        .kategori-title {
+            font-size: 1.2rem;
+        }
+    }
+
+    /* Accessibility improvements */
+    .alat-card:focus-within {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        .alat-card {
+            transition: none;
+        }
+        
+        .alat-card:hover {
+            transform: none;
+        }
+        
+        .titleSweep,
+        .categoryPulse,
+        .statusPulse {
+            animation: none;
+        }
+    }
+</style>
+
+<div class="container my-5">
+    <!-- Main Title Section -->
+    <div class="main-title">
+        <h1>
+            <i class="fas fa-flask me-3"></i>
+            LABORATORY EQUIPMENT LIST
+        </h1>
+        <p>All equipment available for loan within the laboratory management system.</p>
+    </div>
+
+    <!-- Equipment Categories -->
+    {% for kategori_utama in semua_kategori_utama %}
+        <div class="kategori-section">
+            <div class="kategori-header">
+                <h2 class="kategori-title">
+                    <i class="fas fa-microchip"></i>
+                    {{ kategori_utama.nama }}
+                </h2>
+            </div>
+            
+            <div class="alat-grid">
+                {% for jenis_alat in kategori_utama.sub_kategori.all %}
+                    {% for unit in jenis_alat.unit_alat.all %}
+                        <div class="alat-card">
+                            <div class="alat-image-container">
+                                {% if unit.foto %}
+                                    <img src="{{ unit.foto.url }}" alt="Foto {{ unit.tipe_atau_merk }}" class="alat-image">
+                                {% else %}
+                                    <div class="no-image">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="alat-info">
+                                <h5>{{ unit.tipe_atau_merk }}</h5>
+                                
+                                <p>
+                                    <strong>TYPE:</strong>
+                                    <span>{{ jenis_alat.nama }}</span>
+                                </p>
+                                
+                                <p>
+                                    <strong>SERIAL:</strong>
+                                    <span>{{ unit.serial_number }}</span>
+                                </p>
+                                
+                                <div class="status-container">
+                                    <div class="status-badge {% if unit.status == 'Tersedia' %}status-tersedia{% else %}status-dipinjam{% endif %}">
+                                        {{ unit.get_status_display }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No equipment available</h3>
+                            <p>There are no equipment units in this category yet.</p>
+                        </div>
+                    {% endfor %}
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No equipment types</h3>
+                        <p>There are no equipment types in this category yet.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No categories available</h3>
+            <p>There are no equipment categories configured yet.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+#version: '3.8'
+
+services:
+  # Kompartemen 1: Database PostgreSQL
+  3lab:
+    image: postgres:16  # Menggunakan image resmi PostgreSQL versi 16
+    ports: 
+      - "24236:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=labtridb3
+      - POSTGRES_USER=adminlabtri3
+      - POSTGRES_PASSWORD=AdminLabTri2023toTRI3 # Ganti dengan password Anda
+
+  # Kompartemen 2: Aplikasi Django
+  web:
+    build: .  # Membangun dari Dockerfile di folder ini
+    command: gunicorn manajemen_lab.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app  # Menghubungkan folder proyek Anda ke /app di dalam container
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    expose:
+      - 8000
+    depends_on:
+      - 3lab  # Memberitahu Docker untuk menyalakan database terlebih dahulu
+
+  # Kompartemen 3: Web Server Nginx
+  nginx:
+    image: nginx:latest  # Menggunakan image resmi Nginx terbaru
+    ports:
+      - "80:80"  # Memetakan port 80 dari luar (PC Anda) ke port 80 di container Nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf # Menaruh file konfigurasi Nginx
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - web # Memberitahu Docker untuk menyalakan Django terlebih dahulu
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

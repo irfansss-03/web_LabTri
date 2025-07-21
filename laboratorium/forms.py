@@ -10,17 +10,28 @@ class PeminjamanForm(forms.ModelForm):
             'nama_lengkap', 'status_peminjam', 'nrp_nip', 'nomor_telepon', 
             'dosen_perkuliahan', 'nama_plp', 'catatan_kondisi'
         ]
+        # --- TAMBAHKAN BLOK INI UNTUK MENGGANTI LABEL ---
+        labels = {
+            'nama_lengkap': 'Full Name',
+            'status_peminjam': 'Borrower Status',
+            'nrp_nip': 'NRP / NIP',
+            'nomor_telepon': 'Phone Number',
+            'dosen_perkuliahan': 'Lecturer Name',
+            'nama_plp': 'PLP Name',
+            'catatan_kondisi': 'Equipment Condition Notes',
+        }
+        # --- BATAS BLOK BARU ---
 
     def clean_nrp_nip(self):
         data = self.cleaned_data.get('nrp_nip')
         if data and not data.isdigit():
-            raise forms.ValidationError("NRP/NIP hanya boleh berisi angka.")
+            raise forms.ValidationError("NRP/NIP must be numeric only.")
         return data
 
     def clean_nomor_telepon(self):
         data = self.cleaned_data.get('nomor_telepon')
         if data and not data.isdigit():
-            raise forms.ValidationError("Nomor telepon hanya boleh berisi angka.")
+            raise forms.ValidationError("Phone number must be numeric only.")
         return data
 
 class PengembalianForm(forms.ModelForm):
@@ -28,7 +39,8 @@ class PengembalianForm(forms.ModelForm):
         model = Pengembalian
         fields = ['peminjaman', 'nama_pengembali', 'kondisi_barang', 'nama_plp', 'bukti_peminjaman']
         labels = {
-            'nama_plp': 'PIC/PLP Laboratorium',  # Ganti "Nama PLP" menjadi "Nama PLP Penerima"
+            'kondisi_barang': 'Item Condition upon Return',
+            'nama_plp': 'Laboratory PIC/PLP',  # Ganti "Nama PLP" menjadi "Nama PLP Penerima"
         }
 
     def __init__(self, *args, **kwargs):
@@ -60,7 +72,7 @@ class PengembalianForm(forms.ModelForm):
             queryset_final = peminjaman_aktif.exclude(pk__in=peminjaman_selesai)
             
             self.fields['peminjaman'].queryset = queryset_final
-            self.fields['peminjaman'].label = "Pilih Peminjaman yang Akan Dikembalikan"
+            self.fields['peminjaman'].label = "Select the Loan to be Returned"
 
     def clean(self):
         cleaned_data = super().clean()
@@ -70,6 +82,6 @@ class PengembalianForm(forms.ModelForm):
         if peminjaman_obj:
             if peminjaman_obj.is_alat_baru and not bukti_file:
                 raise forms.ValidationError(
-                    "Untuk pengembalian 'alat baru', Anda wajib mengunggah kembali file bukti peminjaman (PDF)."
+                    "For the return of 'new equipment', you are required to re-upload the loan proof file (PDF)."
                 )
         return cleaned_data 

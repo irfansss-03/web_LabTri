@@ -27,11 +27,11 @@
             vertical-align: middle; /* Kunci agar logo dan teks sejajar di tengah secara vertikal */
         }
         .logo-cell {
-            width: 16%; /* Lebar kolom logo */
+            width: 18%; /* Lebar kolom logo */
             padding-right: 15px;
         }
         .logo-cell img {
-            max-width: 80px; /* Atur ukuran maksimal logo */
+            max-width: 85px; /* Atur ukuran maksimal logo */
             height: auto;
         }
         .text-cell {
@@ -61,7 +61,7 @@
         }
         .data-table th, .data-table td { 
             border: 1px solid #999; 
-            padding: 10px; 
+            padding: 8px 10px; 
             text-align: left; 
         }
         .data-table th { 
@@ -87,21 +87,23 @@
     <table class="header-table">
         <tr>
             <td class="logo-cell">
-                <img src="https://tri.pens.ac.id/wp-content/themes/Divi/images/logo.png" alt="Logo">
+                {% if logo_data %}
+                    <img src="data:image/png;base64,{{ logo_data }}" alt="Logo">
+                {% endif %}
             </td>
             <td class="text-cell">
-                <h1>Laboratorium Teknologi Rekayasa Internet</h1>
-                <h2>Bukti Peminjaman Alat pada {{ peminjaman.laboratorium.nama }}</h2>
+                <h1>Internet Engineering Technology Laboratory</h1>
+                <h2>Proof of Equipment Loan at the {{ peminjaman.laboratorium.nama }}</h2>
             </td>
         </tr>
     </table>
     
-    <p><strong>Tanggal Cetak:</strong> {% now "d F Y" %}</p>
+    <p style="text-align: right;"><strong>Print Date:</strong> {% now "F d, Y" %}</p>
     
-    <h3>Data Peminjam</h3>
+    <h3>Borrower Information</h3>
     <table class="data-table">
         <tr>
-            <th>Nama Lengkap</th>
+            <th>Full Name</th>
             <td>{{ peminjaman.nama_lengkap }}</td>
         </tr>
         <tr>
@@ -114,28 +116,28 @@
         </tr>
     </table>
     
-    <h3>Data Alat yang Dipinjam</h3>
+    <h3>Borrowed Equipment Information</h3>
     <table class="data-table">
         {% if peminjaman.is_alat_baru %}
             <tr>
-                <th>Nama Alat</th>
+                <th>Equipment Name</th>
                 <td>{{ peminjaman.nama_alat_baru }}</td>
             </tr>
             <tr>
-                <th>Tipe/Merk</th>
+                <th>Type/Brand</th>
                 <td>{{ peminjaman.tipe_alat_baru }}</td>
             </tr>
             <tr>
                 <th>Serial Number</th>
-                <td>{{ peminjaman.sn_alat_baru|default:"-" }}</td>
+                <td>{{ peminjaman.sn_alat_baru|default:"N/A" }}</td>
             </tr>
         {% else %}
             <tr>
-                <th>Kategori Alat</th>
+                <th>Equipment Category</th>
                 <td>{{ peminjaman.unit_alat.kategori.nama }}</td>
             </tr>
              <tr>
-                <th>Tipe/Merk</th>
+                <th>Type/Brand</th>
                 <td>{{ peminjaman.unit_alat.tipe_atau_merk }}</td>
             </tr>
             <tr>
@@ -144,24 +146,24 @@
             </tr>
         {% endif %}
         <tr>
-            <th>Catatan Kondisi Awal</th>
+            <th>Initial Equipment Condition Notes</th>
             <td>{{ peminjaman.catatan_kondisi|default:"-" }}</td>
         </tr>
     </table>
 
     <div style="width: 100%; margin-top: 25px; page-break-inside: avoid; text-align: center;">
         
-        <p style="margin-bottom: 20px;"><strong>Mengetahui :</strong></p>
+        <p style="margin-bottom: 20px;"><strong>Acknowledged by :</strong></p>
         
         <table class="signature-table">
             <tr>
                 <td>
-                    <p><strong>Peminjam</strong></p>
+                    <p><strong>Borrower</strong></p>
                     <p style="padding-top: 70px;">({{ peminjaman.nama_lengkap }})</p>
                 </td>
                 
                 <td>
-                    <p><strong>PIC/PLP Laboratorium</strong></p>
+                    <p><strong>Laboratory PIC/PLP</strong></p>
                     <p style="padding-top: 70px;">( .......................................... )</p>
                 </td>
             </tr>

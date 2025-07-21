@@ -1,0 +1,15 @@
+# Abaikan file-file yang dibuat Python
+__pycache__/
+*.pyc
+
+# Abaikan virtual environment
+env/
+.venv/
+
+# Abaikan file-file Git
+.git
+.gitignore
+
+# Abaikan file-file IDE/Editor
+.idea/
+.vscode/

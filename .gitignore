@@ -1,0 +1,18 @@
+# File sementara Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Folder yang digenerate oleh Django
+staticfiles/
+media/
+
+# File Environment (untuk menyimpan password dan secret key)
+.env
+
+# Folder virtual environment lokal (jika ada)
+venv/
+env/
+
+# File database lokal (jika pernah pakai)
+db.sqlite3

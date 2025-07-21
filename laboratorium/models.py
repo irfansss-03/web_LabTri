@@ -41,7 +41,7 @@ class KategoriAlat(models.Model):
 
 class UnitAlat(models.Model):
     KONDISI_CHOICES = [('Baik', 'Baik'), ('Perlu Perbaikan', 'Perlu Perbaikan'), ('Rusak', 'Rusak')]
-    STATUS_CHOICES = [('Tersedia', 'Tersedia'), ('Dipinjam', 'Dipinjam')]
+    STATUS_CHOICES = [('Tersedia', 'AVAILABLE'), ('Dipinjam', 'ON LOAN')]
     kategori = models.ForeignKey(KategoriAlat, on_delete=models.CASCADE, related_name="unit_alat")
     tipe_atau_merk = models.CharField(max_length=100, help_text="Contoh: Raspberry Pi 4 Model B")
     serial_number = models.CharField(max_length=100, unique=True)
@@ -100,12 +100,12 @@ class Pengembalian(models.Model):
     KONDISI_CHOICES = [('Baik', 'Baik'), ('Rusak', 'Rusak'), ('Minus', 'Minus')]
    # Kode BARU yang Benar
     peminjaman = models.ForeignKey(Peminjaman, on_delete=models.CASCADE)
-    nama_pengembali = models.CharField(max_length=150, verbose_name="Nama Lengkap Pengembali", default="")
-    bukti_peminjaman = models.FileField(upload_to='bukti_kembali/', blank=True, null=True, verbose_name="Upload Bukti Peminjaman (Opsional)")
+    nama_pengembali = models.CharField(max_length=150, verbose_name="Full Name of Person Returning Item", default="")
+    bukti_peminjaman = models.FileField(upload_to='bukti_kembali/', blank=True, null=True, verbose_name="Upload Proof of Loan (Optional)")
     tanggal_pengembalian = models.DateField(auto_now_add=True)
     kondisi_barang = models.CharField(max_length=20, choices=KONDISI_CHOICES)
     status = models.CharField(max_length=30, choices=STATUS_KEMBALI_CHOICES, default='Menunggu Konfirmasi')
-    nama_plp = models.CharField(max_length=150, help_text="Isi dengan nama PLP yang menerima barang")
+    nama_plp = models.CharField(max_length=150)
     class Meta:
         ordering = ['-tanggal_pengembalian']
         verbose_name_plural = "Data Pengembalian"

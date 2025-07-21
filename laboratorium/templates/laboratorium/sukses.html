@@ -2,44 +2,54 @@
 {% block content %}
 
 <style>
+    :root {
+        --success-primary: #00ff88;
+        --success-secondary: #0066ff;
+        --success-accent: #00d4ff;
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-primary: 0 20px 40px rgba(0, 0, 0, 0.4);
+        --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.3);
+        --border-radius: 24px;
+    }
+
     .success-container {
-        min-height: 80vh;
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 40px 20px;
+        padding: 2rem;
         position: relative;
+        overflow: hidden;
     }
-    
+
     .success-card {
         background: var(--glass-bg);
-        backdrop-filter: blur(30px);
-        border: 2px solid var(--border-glow);
-        border-radius: 20px;
-        padding: 60px 50px;
+        backdrop-filter: blur(25px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius);
+        padding: 4rem 3rem;
         text-align: center;
-        box-shadow: 
-            0 20px 60px rgba(0, 0, 0, 0.3),
-            0 0 30px rgba(0, 212, 255, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        box-shadow: var(--shadow-primary);
         max-width: 600px;
         width: 100%;
         position: relative;
         overflow: hidden;
-        animation: successAppear 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: cardSlideIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: all var(--transition-smooth);
     }
-    
+
     .success-card::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        height: 4px;
-        background: var(--tech-gradient);
-        animation: progressGlow 2s ease-out;
+        height: 3px;
+        background: linear-gradient(90deg, var(--success-primary), var(--success-accent));
+        animation: progressLoad 2s ease-out;
     }
-    
+
     .success-card::after {
         content: '';
         position: absolute;
@@ -47,100 +57,116 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(45deg, transparent 30%, rgba(0, 212, 255, 0.05) 50%, transparent 70%);
-        animation: shimmer 3s ease-in-out infinite;
+        background: linear-gradient(135deg, transparent 30%, rgba(0, 255, 136, 0.05) 50%, transparent 70%);
+        animation: cardShimmer 3s ease-in-out infinite;
         pointer-events: none;
     }
-    
+
+    .success-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 
+            var(--shadow-primary),
+            var(--shadow-glow);
+        border-color: rgba(0, 255, 136, 0.4);
+    }
+
     .success-icon {
         width: 120px;
         height: 120px;
-        background: var(--tech-gradient);
+        background: linear-gradient(135deg, var(--success-primary), var(--success-accent));
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 30px;
+        margin: 0 auto 2rem;
         position: relative;
-        animation: iconBounce 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s both;
+        animation: iconScale 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s both;
         box-shadow: 
-            0 15px 35px rgba(0, 212, 255, 0.4),
-            0 0 20px rgba(0, 212, 255, 0.3);
+            0 15px 30px rgba(0, 255, 136, 0.4),
+            0 0 0 0 rgba(0, 255, 136, 0.7);
     }
-    
+
     .success-icon::before {
         content: '';
         position: absolute;
         width: 140px;
         height: 140px;
-        border: 2px solid var(--bright-blue);
+        border: 2px solid var(--success-primary);
         border-radius: 50%;
-        animation: ripplePulse 2s infinite;
+        animation: iconPulse 2s infinite;
+        opacity: 0.6;
+    }
+
+    .success-icon::after {
+        content: '';
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border: 1px solid var(--success-accent);
+        border-radius: 50%;
+        animation: iconPulse 2s infinite 0.5s;
         opacity: 0.3;
     }
-    
+
     .success-icon i {
         font-size: 3.5rem;
-        color: var(--primary-white);
-        animation: checkReveal 0.8s ease-out 1s both;
-        transform: scale(0) rotate(-45deg);
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        color: var(--text-primary);
+        animation: checkAppear 0.6s ease-out 1.2s both;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        transform: scale(0);
     }
-    
+
     .success-title {
-        font-size: 3rem;
-        font-weight: 700;
+        font-size: 3.5rem;
+        font-weight: 800;
         font-family: 'JetBrains Mono', monospace;
-        background: var(--tech-gradient);
+        background: linear-gradient(135deg, var(--success-primary), var(--success-accent));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 20px;
-        animation: titleSlideIn 0.8s ease-out 0.6s both;
-        opacity: 0;
-        transform: translateY(30px);
-        text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        margin-bottom: 1.5rem;
+        animation: titleSlide 0.8s ease-out 0.6s both;
+        letter-spacing: -0.02em;
+        text-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
     }
-    
+
     .success-message {
-        font-size: 1.3rem;
-        color: var(--primary-white);
-        margin-bottom: 40px;
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 2.5rem;
         line-height: 1.6;
         font-weight: 400;
-        font-family: 'JetBrains Mono', monospace;
-        animation: messageSlideIn 0.8s ease-out 0.8s both;
+        animation: messageSlide 0.8s ease-out 0.8s both;
         opacity: 0;
         transform: translateY(20px);
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
-    
+
     .btn-dashboard {
-        background: var(--tech-gradient);
-        border: 2px solid var(--bright-blue);
-        border-radius: 12px;
-        color: var(--primary-white);
+        background: linear-gradient(135deg, var(--success-primary), var(--success-accent));
+        border: 1px solid var(--success-primary);
+        border-radius: 16px;
+        color: var(--bg-primary);
         font-size: 1.1rem;
         font-weight: 600;
         font-family: 'JetBrains Mono', monospace;
-        padding: 18px 40px;
+        padding: 1.25rem 2.5rem;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 12px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 0.75rem;
+        transition: all var(--transition-smooth);
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         box-shadow: 
-            0 10px 30px rgba(0, 212, 255, 0.3),
-            0 0 20px rgba(0, 212, 255, 0.2);
+            0 8px 25px rgba(0, 255, 136, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
         position: relative;
         overflow: hidden;
-        animation: buttonSlideIn 0.8s ease-out 1s both;
+        animation: buttonSlide 0.8s ease-out 1s both;
         opacity: 0;
         transform: translateY(20px);
     }
-    
+
     .btn-dashboard::before {
         content: '';
         position: absolute;
@@ -148,99 +174,84 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
-        transition: left 0.6s ease;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.5s ease;
     }
-    
-    .btn-dashboard::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 1px;
-        height: 100%;
-        background: var(--bright-blue);
-        animation: scanLine 2s linear infinite;
-    }
-    
+
     .btn-dashboard:hover::before {
         left: 100%;
     }
-    
+
     .btn-dashboard:hover {
         transform: translateY(-3px);
         box-shadow: 
-            0 15px 40px rgba(0, 212, 255, 0.5),
-            0 0 30px rgba(0, 212, 255, 0.4);
-        color: var(--primary-white);
+            0 12px 35px rgba(0, 255, 136, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        color: var(--bg-primary);
         text-decoration: none;
-        border-color: var(--tech-cyan);
+        filter: brightness(1.1);
     }
-    
+
     .btn-dashboard i {
         font-size: 1.2rem;
-        transition: transform 0.3s ease;
+        transition: transform var(--transition-fast);
     }
-    
+
     .btn-dashboard:hover i {
-        transform: translateX(5px);
+        transform: translateX(4px);
     }
-    
-    /* Engineering particles */
-    .success-particles {
+
+    /* Floating Elements */
+    .floating-particles {
         position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
+        top: 0;
+        left: 0;
         pointer-events: none;
-        overflow: hidden;
+        z-index: -1;
     }
-    
-    .particle-element {
+
+    .particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: var(--success-primary);
+        border-radius: 50%;
+        opacity: 0.7;
+        animation: particleFloat 6s ease-in-out infinite;
+        box-shadow: 0 0 12px currentColor;
+    }
+
+    .particle:nth-child(2n) {
+        background: var(--success-accent);
+        animation-delay: -1s;
+        animation-duration: 8s;
+    }
+
+    .particle:nth-child(3n) {
+        background: var(--success-secondary);
+        animation-delay: -2s;
+        animation-duration: 7s;
+    }
+
+    .celebration-burst {
         position: absolute;
         width: 8px;
         height: 8px;
-        border-radius: 50%;
-        opacity: 0.6;
-        animation: particleFloat 8s ease-in-out infinite;
-        box-shadow: 0 0 15px currentColor;
-    }
-    
-    .particle-element:nth-child(odd) {
-        background: var(--bright-blue);
-    }
-    
-    .particle-element:nth-child(even) {
-        background: var(--bright-green);
-        animation-delay: -2s;
-        animation-duration: 10s;
-    }
-    
-    .particle-element:nth-child(3n) {
-        background: var(--bright-yellow);
-        animation-delay: -4s;
-        animation-duration: 12s;
-    }
-    
-    /* Circuit celebration effect */
-    .celebration-burst {
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background: var(--bright-blue);
+        background: var(--success-primary);
         border-radius: 50%;
         pointer-events: none;
-        animation: burstFade 2s ease-out forwards;
-        box-shadow: 0 0 10px currentColor;
+        animation: burstEffect 1.5s ease-out forwards;
+        box-shadow: 0 0 15px currentColor;
     }
-    
+
     /* Animations */
-    @keyframes successAppear {
+    @keyframes cardSlideIn {
         0% {
             opacity: 0;
-            transform: translateY(60px) scale(0.8);
-            filter: blur(10px);
+            transform: translateY(50px) scale(0.9);
+            filter: blur(8px);
         }
         100% {
             opacity: 1;
@@ -248,23 +259,34 @@
             filter: blur(0);
         }
     }
-    
-    @keyframes iconBounce {
+
+    @keyframes iconScale {
         0% {
-            opacity: 0;
             transform: scale(0) rotate(-180deg);
+            opacity: 0;
         }
-        60% {
+        50% {
+            transform: scale(1.1) rotate(0deg);
             opacity: 1;
-            transform: scale(1.15) rotate(10deg);
         }
         100% {
-            opacity: 1;
             transform: scale(1) rotate(0deg);
+            opacity: 1;
         }
     }
-    
-    @keyframes checkReveal {
+
+    @keyframes iconPulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.6;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.3;
+        }
+    }
+
+    @keyframes checkAppear {
         0% {
             transform: scale(0) rotate(-45deg);
             opacity: 0;
@@ -274,92 +296,87 @@
             opacity: 1;
         }
     }
-    
-    @keyframes titleSlideIn {
-        to {
+
+    @keyframes titleSlide {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
             opacity: 1;
             transform: translateY(0);
         }
     }
-    
-    @keyframes messageSlideIn {
-        to {
+
+    @keyframes messageSlide {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
             opacity: 1;
             transform: translateY(0);
         }
     }
-    
-    @keyframes buttonSlideIn {
-        to {
+
+    @keyframes buttonSlide {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
             opacity: 1;
             transform: translateY(0);
         }
     }
-    
-    @keyframes ripplePulse {
-        0%, 100% {
-            transform: scale(1);
-            opacity: 0.3;
-        }
-        50% {
-            transform: scale(1.1);
-            opacity: 0.1;
-        }
-    }
-    
-    @keyframes progressGlow {
+
+    @keyframes progressLoad {
         0% {
             width: 0%;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            opacity: 0;
         }
         100% {
             width: 100%;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+            opacity: 1;
         }
     }
-    
-    @keyframes shimmer {
+
+    @keyframes cardShimmer {
         0% {
-            transform: translateX(-100%);
+            transform: translateX(-100%) rotate(45deg);
         }
         100% {
-            transform: translateX(100%);
+            transform: translateX(100%) rotate(45deg);
         }
     }
-    
+
     @keyframes particleFloat {
         0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-            opacity: 0.6;
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.7;
         }
         50% {
-            transform: translateY(-30px) rotate(180deg);
+            transform: translateY(-25px) rotate(180deg);
             opacity: 1;
         }
     }
-    
-    @keyframes burstFade {
+
+    @keyframes burstEffect {
         0% {
-            transform: scale(0) translateY(0);
+            transform: scale(0);
             opacity: 1;
         }
         100% {
-            transform: scale(3) translateY(-60px);
+            transform: scale(4);
             opacity: 0;
         }
     }
-    
-    @keyframes scanLine {
-        0% { opacity: 0; transform: translateX(0); }
-        50% { opacity: 1; }
-        100% { opacity: 0; transform: translateX(10px); }
-    }
-    
-    /* Mobile Responsiveness */
+
+    /* Responsive Design */
     @media (max-width: 768px) {
         .success-card {
-            padding: 50px 30px;
-            margin: 20px;
+            padding: 3rem 2rem;
+            margin: 1rem;
         }
         
         .success-icon {
@@ -372,7 +389,7 @@
         }
         
         .success-title {
-            font-size: 2.3rem;
+            font-size: 2.5rem;
         }
         
         .success-message {
@@ -380,14 +397,14 @@
         }
         
         .btn-dashboard {
-            padding: 15px 30px;
+            padding: 1rem 2rem;
             font-size: 1rem;
         }
     }
-    
+
     @media (max-width: 480px) {
         .success-card {
-            padding: 40px 25px;
+            padding: 2.5rem 1.5rem;
         }
         
         .success-title {
@@ -396,14 +413,23 @@
         
         .success-message {
             font-size: 1rem;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
+        }
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
         }
     }
 </style>
 
 <div class="success-container">
-    <!-- Engineering particles -->
-    <div class="success-particles" id="successParticles"></div>
+    <!-- Floating Particles -->
+    <div class="floating-particles" id="particles"></div>
     
     <div class="success-card">
         <!-- Success Icon -->
@@ -412,7 +438,7 @@
         </div>
         
         <!-- Success Title -->
-        <h1 class="success-title">BERHASIL!</h1>
+        <h1 class="success-title">SUCCESS</h1>
         
         <!-- Success Message -->
         <p class="success-message">{{ pesan }}</p>
@@ -420,40 +446,40 @@
         <!-- Dashboard Button -->
         <a href="{% url 'dashboard' %}" class="btn-dashboard">
             <i class="fas fa-home"></i>
-            <span>KEMBALI KE DASHBOARD</span>
+            <span>Return to Dashboard</span>
         </a>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Create engineering particles
+    // Create floating particles
     function createParticles() {
-        const container = document.getElementById('successParticles');
-        const particleCount = 15;
+        const container = document.getElementById('particles');
+        const particleCount = 12;
         
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
-            particle.className = 'particle-element';
+            particle.className = 'particle';
             particle.style.left = Math.random() * 100 + '%';
             particle.style.top = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDelay = Math.random() * 6 + 's';
             container.appendChild(particle);
         }
     }
     
-    // Create circuit celebration burst
+    // Create celebration burst effect
     function createCelebrationBurst() {
         const card = document.querySelector('.success-card');
-        const colors = ['#00d4ff', '#00ff88', '#ffff00', '#00ffff'];
+        const colors = ['#00ff88', '#00d4ff', '#0066ff'];
         
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 12; i++) {
             const burst = document.createElement('div');
             burst.className = 'celebration-burst';
             burst.style.background = colors[Math.floor(Math.random() * colors.length)];
-            burst.style.left = (45 + Math.random() * 10) + '%';
-            burst.style.top = (40 + Math.random() * 20) + '%';
-            burst.style.animationDelay = Math.random() * 0.5 + 's';
+            burst.style.left = (40 + Math.random() * 20) + '%';
+            burst.style.top = (30 + Math.random() * 40) + '%';
+            burst.style.animationDelay = Math.random() * 0.3 + 's';
             card.appendChild(burst);
             
             // Remove burst after animation
@@ -461,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (burst.parentNode) {
                     burst.parentNode.removeChild(burst);
                 }
-            }, 2500);
+            }, 1500);
         }
     }
     
@@ -469,7 +495,19 @@ document.addEventListener('DOMContentLoaded', function() {
     createParticles();
     
     // Trigger celebration after icon animation
-    setTimeout(createCelebrationBurst, 1500);
+    setTimeout(createCelebrationBurst, 1600);
+    
+    // Enhanced button interaction
+    const dashboardBtn = document.querySelector('.btn-dashboard');
+    if (dashboardBtn) {
+        dashboardBtn.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+        
+        dashboardBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    }
 });
 </script>
 
