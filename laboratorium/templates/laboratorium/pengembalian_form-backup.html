@@ -1,9 +1,0 @@
-{% extends 'laboratorium/base.html' %}
-{% block content %}
-<h2 class="my-4">Form Pengembalian Alat</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-info">Kirim Laporan Pengembalian</button>
-</form>
-{% endblock %}
