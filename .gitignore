@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 *.pyo
+*.zip
+*.rar
+*.7z
 
 # Folder yang digenerate oleh Django
 staticfiles/
